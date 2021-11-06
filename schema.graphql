@@ -55,6 +55,7 @@ type Position @entity { # open position
   liquidationPrice: BigInt
 
   user: Bytes!
+  currency: Bytes!
   
   isLong: Boolean!
 
@@ -75,6 +76,7 @@ type Trade @entity { # closed position
   positionId: BigInt!
 
   user: Bytes!
+  currency: Bytes!
 
   productId: BigInt!
   margin: BigInt!

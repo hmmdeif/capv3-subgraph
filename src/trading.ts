@@ -69,6 +69,8 @@ export function handleNewPosition(event: NewPosition): void {
   position.leverage = leverage
 
   position.user = event.params.user
+  position.currency = event.params.currency
+
   position.fee = event.params.fee
   position.isLong = event.params.isLong
 
@@ -192,6 +194,7 @@ export function handleClosePosition(event: ClosePosition): void {
 
     trade.margin = event.params.margin
     trade.user = event.params.user
+    trade.currency = position.currency
 
     trade.fee = event.params.fee
     trade.pnl = event.params.pnl
