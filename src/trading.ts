@@ -53,6 +53,12 @@ function getDayData(event: ethereum.Event): DayData {
 
 }
 
+function getLiquidationThreshold(productId: BigInt): BigInt {
+  if (productId.toI32() == 1) return BigInt.fromI32(8000);
+  if (productId.toI32() == 2) return BigInt.fromI32(8000);
+  return BigInt.fromI32(8000);
+}
+
 export function handleNewPosition(event: NewPosition): void {
 
   // Create position
@@ -93,10 +99,11 @@ export function handleNewPosition(event: NewPosition): void {
   }
 
   let liquidationPrice = ZERO_BI
+  let liquidationThreshold = getLiquidationThreshold(position.productId)
   if (position.isLong) {
-    liquidationPrice = position.price.minus((position.price.times(LIQUIDATION_THRESHOLD).times(BigInt.fromI32(10000))).div(leverage))
+    liquidationPrice = position.price.minus((position.price.times(liquidationThreshold).times(BigInt.fromI32(10000))).div(leverage))
   } else {
-    liquidationPrice = position.price.plus((position.price.times(LIQUIDATION_THRESHOLD).times(BigInt.fromI32(10000))).div(leverage))
+    liquidationPrice = position.price.plus((position.price.times(liquidationThreshold).times(BigInt.fromI32(10000))).div(leverage))
   }
 
   position.liquidationPrice = liquidationPrice
@@ -150,10 +157,11 @@ export function handleAddMargin(event: AddMargin): void {
     product.cumulativeMargin = product.cumulativeMargin.plus(event.params.margin)
 
     let liquidationPrice = ZERO_BI
+    let liquidationThreshold = getLiquidationThreshold(position.productId)
     if (position.isLong) {
-      liquidationPrice = position.price.minus((position.price.times(LIQUIDATION_THRESHOLD).times(BigInt.fromI32(10000))).div(position.leverage))
+      liquidationPrice = position.price.minus((position.price.times(liquidationThreshold).times(BigInt.fromI32(10000))).div(position.leverage))
     } else {
-      liquidationPrice = position.price.plus((position.price.times(LIQUIDATION_THRESHOLD).times(BigInt.fromI32(10000))).div(position.leverage))
+      liquidationPrice = position.price.plus((position.price.times(liquidationThreshold).times(BigInt.fromI32(10000))).div(position.leverage))
     }
 
     position.liquidationPrice = liquidationPrice

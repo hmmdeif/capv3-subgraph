@@ -6,7 +6,6 @@ dataSources:
     name: Trading
     network: arbitrum-one
     source:
-      address: ''
       abi: Trading
     mapping:
       kind: ethereum/events
@@ -29,7 +28,6 @@ dataSources:
     name: Pool
     network: arbitrum-one
     source:
-      address: ''
       abi: Pool
     mapping:
       kind: ethereum/events
