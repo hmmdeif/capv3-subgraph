@@ -73,7 +73,7 @@ type Trade @entity { # closed position
 
   txHash: String! # event.transaction.hash.toHexString()
 
-  positionId: BigInt!
+  positionKey: Bytes!
 
   user: Bytes!
   currency: Bytes!

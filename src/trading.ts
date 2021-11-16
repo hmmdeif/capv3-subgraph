@@ -149,11 +149,13 @@ export function handleClosePosition(event: ClosePosition): void {
     let data = getData()
     let dayData = getDayData(event)
     let product = Product.load(event.params.productId.toString())
-
     data.tradeCount = data.tradeCount.plus(ONE_BI)
 
     // create new trade
     let trade = new Trade(data.tradeCount.toString())
+
+    trade.positionKey = event.params.key
+
     trade.txHash = event.transaction.hash.toHexString()
     
     trade.productId = event.params.productId
