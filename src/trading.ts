@@ -1,9 +1,9 @@
 import { BigInt, store, log, ethereum } from "@graphprotocol/graph-ts"
 import {
   Trading,
-  AddMargin,
-  ClosePosition,
-  NewPosition
+  NewOrder,
+  PositionUpdated,
+  ClosePosition
 } from "../generated/Trading/Trading"
 import { Data, DayData, Product, Position, Trade } from "../generated/schema"
 
@@ -11,7 +11,7 @@ export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
 
 export const ZERO_BI = BigInt.fromI32(0)
 export const ONE_BI = BigInt.fromI32(1)
-export const UNIT_BI = BigInt.fromString("1000000000000000000")
+export const UNIT_BI = BigInt.fromString("100000000")
 
 export const BASE_FEE = BigInt.fromI32(25) // 0.25%
 export const LIQUIDATION_THRESHOLD = BigInt.fromI32(8000) // 80%
@@ -53,21 +53,28 @@ function getDayData(event: ethereum.Event): DayData {
 
 }
 
-function getLiquidationThreshold(productId: BigInt): BigInt {
-  if (productId.toI32() == 1) return BigInt.fromI32(8000);
-  if (productId.toI32() == 2) return BigInt.fromI32(8000);
+function getLiquidationThreshold(productId: String): BigInt {
+  if (productId == 'ETH-USD') return BigInt.fromI32(8000);
+  if (productId == 'BTC-USD') return BigInt.fromI32(8000);
   return BigInt.fromI32(8000);
 }
 
-export function handleNewPosition(event: NewPosition): void {
+export function handleNewOrder(event: NewOrder): void {
 
-  // Create position
-  let position = new Position(event.params.positionId.toString())
+}
+
+export function handlePositionUpdated(event: PositionUpdated): void {
+
+  let position = Position.load(event.params.key.toString())
+
+  if (position == null) {
+    // Create position
+    position = new Position(event.params.key.toString())
+  }
 
   position.productId = event.params.productId
   position.price = event.params.price
   position.margin = event.params.margin
-
   position.size = event.params.size
 
   let leverage = event.params.size.times(UNIT_BI).div(event.params.margin)
@@ -83,7 +90,7 @@ export function handleNewPosition(event: NewPosition): void {
   position.createdAtTimestamp = event.block.timestamp
   position.createdAtBlockNumber = event.block.number
 
-  let product = Product.load((event.params.productId).toString())
+  let product = Product.load(event.params.productId.toString())
 
   if (product == null) {
 
@@ -99,7 +106,7 @@ export function handleNewPosition(event: NewPosition): void {
   }
 
   let liquidationPrice = ZERO_BI
-  let liquidationThreshold = getLiquidationThreshold(position.productId)
+  let liquidationThreshold = getLiquidationThreshold(position.productId.toString())
   if (position.isLong) {
     liquidationPrice = position.price.minus((position.price.times(liquidationThreshold).times(BigInt.fromI32(10000))).div(leverage))
   } else {
@@ -133,57 +140,15 @@ export function handleNewPosition(event: NewPosition): void {
 
 }
 
-export function handleAddMargin(event: AddMargin): void {
-
-  let position = Position.load(event.params.positionId.toString())
-
-  if (position) {
-
-    position.margin = event.params.newMargin
-    position.leverage = event.params.newLeverage
-
-    position.updatedAtTimestamp = event.block.timestamp
-    position.updatedAtBlockNumber = event.block.number
-
-    // volume updates
-
-    let data = getData()
-    data.cumulativeMargin = data.cumulativeMargin.plus(event.params.margin)
-
-    let dayData = getDayData(event)
-    dayData.cumulativeMargin = dayData.cumulativeMargin.plus(event.params.margin)
-
-    let product = Product.load((position.productId).toString())
-    product.cumulativeMargin = product.cumulativeMargin.plus(event.params.margin)
-
-    let liquidationPrice = ZERO_BI
-    let liquidationThreshold = getLiquidationThreshold(position.productId)
-    if (position.isLong) {
-      liquidationPrice = position.price.minus((position.price.times(liquidationThreshold).times(BigInt.fromI32(10000))).div(position.leverage))
-    } else {
-      liquidationPrice = position.price.plus((position.price.times(liquidationThreshold).times(BigInt.fromI32(10000))).div(position.leverage))
-    }
-
-    position.liquidationPrice = liquidationPrice
-
-    position.save()
-    data.save()
-    dayData.save()
-    product.save()
-
-  }
-
-}
-
 export function handleClosePosition(event: ClosePosition): void {
 
-  let position = Position.load(event.params.positionId.toString())
+  let position = Position.load(event.params.key.toString())
 
   if (position) {
 
     let data = getData()
     let dayData = getDayData(event)
-    let product = Product.load((event.params.productId).toString())
+    let product = Product.load(event.params.productId.toString())
 
     data.tradeCount = data.tradeCount.plus(ONE_BI)
 
@@ -191,7 +156,6 @@ export function handleClosePosition(event: ClosePosition): void {
     let trade = new Trade(data.tradeCount.toString())
     trade.txHash = event.transaction.hash.toHexString()
     
-    trade.positionId = event.params.positionId
     trade.productId = event.params.productId
     trade.leverage = position.leverage
 
@@ -222,7 +186,7 @@ export function handleClosePosition(event: ClosePosition): void {
     // Update position
 
     if (isFullClose) {
-      store.remove('Position', event.params.positionId.toString())
+      store.remove('Position', event.params.key.toString())
       data.positionCount = data.positionCount.minus(ONE_BI)
       product.positionCount = product.positionCount.minus(ONE_BI)
     } else {

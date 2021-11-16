@@ -78,20 +78,7 @@
     },
     {
       "inputs": [],
-      "name": "checkpointBalance",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "checkpointTimestamp",
+      "name": "UNIT",
       "outputs": [
         {
           "internalType": "uint256",
@@ -142,13 +129,7 @@
         }
       ],
       "name": "deposit",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
+      "outputs": [],
       "stateMutability": "payable",
       "type": "function"
     },
@@ -192,7 +173,7 @@
     },
     {
       "inputs": [],
-      "name": "getUtlization",
+      "name": "getUtilization",
       "outputs": [
         {
           "internalType": "uint256",
@@ -218,7 +199,7 @@
     },
     {
       "inputs": [],
-      "name": "maxDailyDrawdown",
+      "name": "minDepositTime",
       "outputs": [
         {
           "internalType": "uint256",
@@ -231,7 +212,7 @@
     },
     {
       "inputs": [],
-      "name": "minDepositTime",
+      "name": "openInterest",
       "outputs": [
         {
           "internalType": "uint256",
@@ -298,11 +279,6 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_maxDailyDrawdown",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
           "name": "_minDepositTime",
           "type": "uint256"
         },
@@ -314,6 +290,11 @@
         {
           "internalType": "uint256",
           "name": "_maxCap",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_withdrawFee",
           "type": "uint256"
         }
       ],
@@ -362,6 +343,24 @@
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "isDecrease",
+          "type": "bool"
+        }
+      ],
+      "name": "updateOpenInterest",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "utilizationMultiplier",
       "outputs": [
@@ -369,19 +368,6 @@
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "weth",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -396,13 +382,7 @@
         }
       ],
       "name": "withdraw",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
+      "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },

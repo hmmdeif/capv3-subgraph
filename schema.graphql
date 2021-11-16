@@ -43,9 +43,9 @@ type Product @entity {
 
 type Position @entity { # open position
 
-  id: ID! # position ID
+  id: ID! # position key
 
-  productId: BigInt!
+  productId: Bytes!
   leverage: BigInt!
   price: BigInt!
   margin: BigInt!
@@ -78,7 +78,7 @@ type Trade @entity { # closed position
   user: Bytes!
   currency: Bytes!
 
-  productId: BigInt!
+  productId: Bytes!
   margin: BigInt!
   leverage: BigInt!
 
