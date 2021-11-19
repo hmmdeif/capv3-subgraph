@@ -17,10 +17,10 @@ export const BASE_FEE = BigInt.fromI32(25) // 0.25%
 export const LIQUIDATION_THRESHOLD = BigInt.fromI32(8000) // 80%
 export const BPS_SCALER = BigInt.fromI32(10000)
 
-function getData(): Data {
-  let data = Data.load((1).toString())
+function getData(currency: String): Data {
+  let data = Data.load(currency)
   if (data == null) {
-    data = new Data((1).toString())
+    data = new Data(currency)
         
     data.cumulativeFees = ZERO_BI
     data.cumulativePnl = ZERO_BI
@@ -33,14 +33,14 @@ function getData(): Data {
   return data!
 }
 
-function getDayData(event: ethereum.Event): DayData {
+function getDayData(currency: String, event: ethereum.Event): DayData {
 
   let timestamp = event.block.timestamp.toI32()
   let day_id = timestamp / 86400
-  let dayData = DayData.load(day_id.toString())
+  let dayData = DayData.load(currency + "-" + day_id.toString())
 
   if (dayData == null) {
-    dayData = new DayData(day_id.toString())
+    dayData = new DayData(currency + "-" + day_id.toString())
     dayData.date = BigInt.fromI32(day_id * 86400)
     dayData.cumulativeVolume = ZERO_BI
     dayData.cumulativeMargin = ZERO_BI
@@ -65,11 +65,11 @@ export function handleNewOrder(event: NewOrder): void {
 
 export function handlePositionUpdated(event: PositionUpdated): void {
 
-  let position = Position.load(event.params.key.toString())
+  let position = Position.load(event.params.key.toHexString())
 
   if (position == null) {
     // Create position
-    position = new Position(event.params.key.toString())
+    position = new Position(event.params.key.toHexString())
   }
 
   position.productId = event.params.productId
@@ -90,11 +90,11 @@ export function handlePositionUpdated(event: PositionUpdated): void {
   position.createdAtTimestamp = event.block.timestamp
   position.createdAtBlockNumber = event.block.number
 
-  let product = Product.load(event.params.productId.toString())
+  let product = Product.load(event.params.productId.toHexString())
 
   if (product == null) {
 
-    product = new Product(event.params.productId.toString())
+    product = new Product(event.params.productId.toHexString())
 
     product.cumulativePnl = ZERO_BI
     product.cumulativeVolume = ZERO_BI
@@ -106,7 +106,7 @@ export function handlePositionUpdated(event: PositionUpdated): void {
   }
 
   let liquidationPrice = ZERO_BI
-  let liquidationThreshold = getLiquidationThreshold(position.productId.toString())
+  let liquidationThreshold = getLiquidationThreshold(position.productId.toHexString())
   if (position.isLong) {
     liquidationPrice = position.price.minus((position.price.times(liquidationThreshold).times(BigInt.fromI32(10000))).div(leverage))
   } else {
@@ -116,13 +116,13 @@ export function handlePositionUpdated(event: PositionUpdated): void {
   position.liquidationPrice = liquidationPrice
 
   // volume updates
-  let data = getData()
+  let data = getData(event.params.currency.toHexString())
   data.cumulativeFees = data.cumulativeFees.plus(event.params.fee)
   data.cumulativeVolume = data.cumulativeVolume.plus(event.params.size)
   data.cumulativeMargin = data.cumulativeMargin.plus(event.params.margin)
   data.positionCount = data.positionCount.plus(ONE_BI)
 
-  let dayData = getDayData(event)
+  let dayData = getDayData(event.params.currency.toHexString(), event)
   dayData.cumulativeFees = dayData.cumulativeFees.plus(event.params.fee)
   dayData.cumulativeVolume = dayData.cumulativeVolume.plus(event.params.size)
   dayData.cumulativeMargin = dayData.cumulativeMargin.plus(event.params.margin)
@@ -142,19 +142,19 @@ export function handlePositionUpdated(event: PositionUpdated): void {
 
 export function handleClosePosition(event: ClosePosition): void {
 
-  let position = Position.load(event.params.key.toString())
+  let position = Position.load(event.params.key.toHexString())
 
   if (position) {
 
-    let data = getData()
-    let dayData = getDayData(event)
-    let product = Product.load(event.params.productId.toString())
+    let data = getData(event.params.currency.toHexString())
+    let dayData = getDayData(event.params.currency.toHexString(), event)
+    let product = Product.load(event.params.productId.toHexString())
     data.tradeCount = data.tradeCount.plus(ONE_BI)
 
     // create new trade
     let trade = new Trade(data.tradeCount.toString())
 
-    trade.positionKey = event.params.key
+    trade.positionKey = event.params.key.toHexString()
 
     trade.txHash = event.transaction.hash.toHexString()
     
@@ -188,7 +188,7 @@ export function handleClosePosition(event: ClosePosition): void {
     // Update position
 
     if (isFullClose) {
-      store.remove('Position', event.params.key.toString())
+      store.remove('Position', event.params.key.toHexString())
       data.positionCount = data.positionCount.minus(ONE_BI)
       product.positionCount = product.positionCount.minus(ONE_BI)
     } else {

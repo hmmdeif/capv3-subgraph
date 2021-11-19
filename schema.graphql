@@ -1,6 +1,6 @@
 type Data @entity {
   
-  id: ID! # 1
+  id: ID! # currency string
 
   cumulativeFees: BigInt
   cumulativePnl: BigInt
@@ -14,7 +14,7 @@ type Data @entity {
 
 type DayData @entity {
 
-  id: ID! # day id = event.block.timestamp / 86400 see https://github.com/Uniswap/uniswap-v3-subgraph/blob/1593a62059589bb1266d19bf18c5fa08fb68fe63/src/utils/intervalUpdates.ts#L43
+  id: ID! # day id = currency - event.block.timestamp / 86400 see https://github.com/Uniswap/uniswap-v3-subgraph/blob/1593a62059589bb1266d19bf18c5fa08fb68fe63/src/utils/intervalUpdates.ts#L43
 
   date: BigInt! # dayStartTimestamp = dayID * 86400
 
@@ -73,7 +73,7 @@ type Trade @entity { # closed position
 
   txHash: String! # event.transaction.hash.toHexString()
 
-  positionKey: Bytes!
+  positionKey: String!
 
   user: Bytes!
   currency: Bytes!

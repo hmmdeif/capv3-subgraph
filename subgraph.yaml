@@ -7,9 +7,10 @@ dataSources:
     network: arbitrum-one
     source:
       abi: Trading
+      address: '0xCAEc650502F15c1a6bFf1C2288fC8F819776B2eC'
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
         - Trading
