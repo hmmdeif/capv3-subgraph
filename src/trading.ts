@@ -70,6 +70,8 @@ export function handlePositionUpdated(event: PositionUpdated): void {
   if (position == null) {
     // Create position
     position = new Position(event.params.key.toHexString())
+    position.createdAtTimestamp = event.block.timestamp
+    position.createdAtBlockNumber = event.block.number
   }
 
   position.productId = event.params.productId
@@ -87,8 +89,8 @@ export function handlePositionUpdated(event: PositionUpdated): void {
   position.fee = event.params.fee
   position.isLong = event.params.isLong
 
-  position.createdAtTimestamp = event.block.timestamp
-  position.createdAtBlockNumber = event.block.number
+  position.updatedAtTimestamp = event.block.timestamp
+  position.updatedAtBlockNumber = event.block.number
 
   let product = Product.load(event.params.productId.toHexString())
 
