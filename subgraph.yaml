@@ -7,6 +7,7 @@ dataSources:
     network: arbitrum-one
     source:
       abi: Trading
+      address: '0xCAEc650502F15c1a6bFf1C2288fC8F819776B2eC'
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -17,30 +18,8 @@ dataSources:
         - name: Trading
           file: ./abis/Trading.json
       eventHandlers:
-        - event: AddMargin(indexed uint256,indexed address,address,uint256,uint256,uint256)
-          handler: handleAddMargin
-        - event: ClosePosition(uint256,indexed address,indexed uint256,uint256,uint256,uint256,uint256,int256,bool)
+        - event: PositionUpdated(indexed bytes32,indexed address,indexed bytes32,address,bool,uint256,uint256,uint256,uint256)
+          handler: handlePositionUpdated
+        - event: ClosePosition(indexed bytes32,indexed address,indexed bytes32,address,bool,uint256,uint256,uint256,uint256,int256,bool)
           handler: handleClosePosition
-        - event: NewPosition(indexed uint256,indexed address,indexed uint256,address,bool,uint256,uint256,uint256,uint256)
-          handler: handleNewPosition
       file: ./src/trading.ts
-  - kind: ethereum/contract
-    name: Pool
-    network: arbitrum-one
-    source:
-      abi: Pool
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      entities:
-        - Pool
-      abis:
-        - name: Pool
-          file: ./abis/Pool.json
-      eventHandlers:
-        - event: Deposit(indexed address,indexed address,uint256,uint256)
-          handler: handleDeposit
-        - event: Withdraw(indexed address,indexed address,uint256,uint256)
-          handler: handleWithdraw
-      file: ./src/pool.ts

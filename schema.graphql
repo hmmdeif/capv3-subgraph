@@ -1,11 +1,15 @@
 type Data @entity {
   
-  id: ID! # 1
+  id: ID! # currency string
 
   cumulativeFees: BigInt
   cumulativePnl: BigInt
   cumulativeVolume: BigInt
   cumulativeMargin: BigInt
+
+  openInterest: BigInt
+  openInterestLong: BigInt
+  openInterestShort: BigInt
 
   positionCount: BigInt
   tradeCount: BigInt
@@ -14,7 +18,7 @@ type Data @entity {
 
 type DayData @entity {
 
-  id: ID! # day id = event.block.timestamp / 86400 see https://github.com/Uniswap/uniswap-v3-subgraph/blob/1593a62059589bb1266d19bf18c5fa08fb68fe63/src/utils/intervalUpdates.ts#L43
+  id: ID! # day id = currency - event.block.timestamp / 86400 see https://github.com/Uniswap/uniswap-v3-subgraph/blob/1593a62059589bb1266d19bf18c5fa08fb68fe63/src/utils/intervalUpdates.ts#L43
 
   date: BigInt! # dayStartTimestamp = dayID * 86400
 
@@ -23,13 +27,17 @@ type DayData @entity {
   cumulativeVolume: BigInt
   cumulativeMargin: BigInt
 
+  openInterest: BigInt
+  openInterestLong: BigInt
+  openInterestShort: BigInt
+
   positionCount: BigInt
   tradeCount: BigInt
 
 }
 
 type Product @entity {
-  id: ID! # product id
+  id: ID! # product id - currency
 
   cumulativeFees: BigInt
   cumulativePnl: BigInt
@@ -39,13 +47,17 @@ type Product @entity {
   positionCount: BigInt
   tradeCount: BigInt
 
+  openInterest: BigInt
+  openInterestLong: BigInt
+  openInterestShort: BigInt
+
 }
 
 type Position @entity { # open position
 
-  id: ID! # position ID
+  id: ID! # position key
 
-  productId: BigInt!
+  productId: Bytes!
   leverage: BigInt!
   price: BigInt!
   margin: BigInt!
@@ -73,12 +85,12 @@ type Trade @entity { # closed position
 
   txHash: String! # event.transaction.hash.toHexString()
 
-  positionId: BigInt!
+  positionKey: String!
 
   user: Bytes!
   currency: Bytes!
 
-  productId: BigInt!
+  productId: Bytes!
   margin: BigInt!
   leverage: BigInt!
 
