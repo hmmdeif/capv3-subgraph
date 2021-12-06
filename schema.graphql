@@ -7,6 +7,10 @@ type Data @entity {
   cumulativeVolume: BigInt
   cumulativeMargin: BigInt
 
+  openInterest: BigInt
+  openInterestLong: BigInt
+  openInterestShort: BigInt
+
   positionCount: BigInt
   tradeCount: BigInt
 
@@ -23,13 +27,17 @@ type DayData @entity {
   cumulativeVolume: BigInt
   cumulativeMargin: BigInt
 
+  openInterest: BigInt
+  openInterestLong: BigInt
+  openInterestShort: BigInt
+
   positionCount: BigInt
   tradeCount: BigInt
 
 }
 
 type Product @entity {
-  id: ID! # product id
+  id: ID! # product id - currency
 
   cumulativeFees: BigInt
   cumulativePnl: BigInt
@@ -38,6 +46,10 @@ type Product @entity {
 
   positionCount: BigInt
   tradeCount: BigInt
+
+  openInterest: BigInt
+  openInterestLong: BigInt
+  openInterestShort: BigInt
 
 }
 
