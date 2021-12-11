@@ -18,6 +18,8 @@ dataSources:
         - name: Trading
           file: ./abis/Trading.json
       eventHandlers:
+        - event: NewOrder(indexed bytes32,indexed address,indexed bytes32,address,bool,uint256,uint256,bool)
+          handler: handleNewOrder
         - event: PositionUpdated(indexed bytes32,indexed address,indexed bytes32,address,bool,uint256,uint256,uint256,uint256)
           handler: handlePositionUpdated
         - event: ClosePosition(indexed bytes32,indexed address,indexed bytes32,address,bool,uint256,uint256,uint256,uint256,int256,bool)

@@ -53,6 +53,36 @@ type Product @entity {
 
 }
 
+# event NewOrder(
+#   bytes32 indexed key,
+#   address indexed user,
+#   bytes32 indexed productId,
+#   address currency,
+#   bool isLong,
+#   uint256 margin,
+#   uint256 size,
+#   bool isClose
+# );
+
+type Order @entity { # open order (unsettled)
+
+  id: ID! # order key
+
+  productId: Bytes!
+  size: BigInt!
+  margin: BigInt!
+
+  user: Bytes!
+  currency: Bytes!
+  
+  isLong: Boolean!
+  isClose: Boolean!
+
+  createdAtTimestamp: BigInt!
+  createdAtBlockNumber: BigInt!
+
+}
+
 type Position @entity { # open position
 
   id: ID! # position key

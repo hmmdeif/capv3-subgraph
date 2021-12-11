@@ -1,10 +1,11 @@
 import { BigInt, store, log, ethereum } from "@graphprotocol/graph-ts"
 import {
   Trading,
+  NewOrder,
   PositionUpdated,
   ClosePosition
 } from "../generated/Trading/Trading"
-import { Data, DayData, Product, Position, Trade } from "../generated/schema"
+import { Data, DayData, Product, Order, Position, Trade } from "../generated/schema"
 
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
 
@@ -95,6 +96,34 @@ function getLiquidationThreshold(productId: String): BigInt {
   return BigInt.fromI32(8000)
 }
 
+export function handleNewOrder(event: NewOrder): void {
+
+  let order = Order.load(event.params.key.toHexString())
+
+  if (order == null) {
+
+    // create order
+    order = new Order(event.params.key.toHexString())
+
+    order.productId = event.params.productId
+    order.margin = event.params.margin
+    order.size = event.params.size
+
+    order.user = event.params.user
+    order.currency = event.params.currency
+
+    order.createdAtTimestamp = event.block.timestamp
+    order.createdAtBlockNumber = event.block.number
+
+    order.isLong = event.params.isLong
+    order.isClose = event.params.isClose
+
+    order.save()
+
+  }
+
+}
+
 export function handlePositionUpdated(event: PositionUpdated): void {
 
   let position = Position.load(event.params.key.toHexString())
@@ -117,6 +146,8 @@ export function handlePositionUpdated(event: PositionUpdated): void {
     orderSize = event.params.size.minus(position.size)
     orderMargin = event.params.margin.minus(position.margin)
   }
+
+  store.remove('Order', event.params.key.toHexString())
 
   position.productId = event.params.productId
   position.price = event.params.price
@@ -194,6 +225,8 @@ export function handleClosePosition(event: ClosePosition): void {
   let position = Position.load(event.params.key.toHexString())
 
   if (position) {
+
+    store.remove('Order', event.params.key.toHexString())
 
     let data = getData(event.params.currency.toHexString())
     let dayData = getDayData(event.params.currency.toHexString(), event)
