@@ -4,12 +4,12 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ 0xcap/cap3",
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ hmmdeif/Capv3",
     "create-local": "graph create --node http://localhost:8020/ 0xcap/cap3",
     "remove-local": "graph remove --node http://localhost:8020/ 0xcap/cap3",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 0xcap/cap3"
   },
   "dependencies": {
-    "@graphprotocol/graph-ts": "0.20.0"
+    "@graphprotocol/graph-ts": "^0.26.0"
   }
 }

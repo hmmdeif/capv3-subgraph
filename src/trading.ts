@@ -30,7 +30,7 @@ function getData(currency: String): Data {
     data.openInterestLong = ZERO_BI
     data.openInterestShort = ZERO_BI
   }
-  return data!
+  return data
 }
 
 function getDayData(currency: String, event: ethereum.Event): DayData {
@@ -65,7 +65,7 @@ function getDayData(currency: String, event: ethereum.Event): DayData {
     dayData.save()
   }
 
-  return dayData!
+  return dayData
 
 }
 
@@ -85,7 +85,7 @@ function getProduct(productId: String, currency: String): Product {
     product.save()
   }
 
-  return product!
+  return product
 
 }
 

@@ -2,17 +2,17 @@ type Data @entity {
   
   id: ID! # currency string
 
-  cumulativeFees: BigInt
-  cumulativePnl: BigInt
-  cumulativeVolume: BigInt
-  cumulativeMargin: BigInt
+  cumulativeFees: BigInt!
+  cumulativePnl: BigInt!
+  cumulativeVolume: BigInt!
+  cumulativeMargin: BigInt!
 
-  openInterest: BigInt
-  openInterestLong: BigInt
-  openInterestShort: BigInt
+  openInterest: BigInt!
+  openInterestLong: BigInt!
+  openInterestShort: BigInt!
 
-  positionCount: BigInt
-  tradeCount: BigInt
+  positionCount: BigInt!
+  tradeCount: BigInt!
 
 }
 
@@ -22,34 +22,34 @@ type DayData @entity {
 
   date: BigInt! # dayStartTimestamp = dayID * 86400
 
-  cumulativeFees: BigInt
-  cumulativePnl: BigInt
-  cumulativeVolume: BigInt
-  cumulativeMargin: BigInt
+  cumulativeFees: BigInt!
+  cumulativePnl: BigInt!
+  cumulativeVolume: BigInt!
+  cumulativeMargin: BigInt!
 
-  openInterest: BigInt
-  openInterestLong: BigInt
-  openInterestShort: BigInt
+  openInterest: BigInt!
+  openInterestLong: BigInt!
+  openInterestShort: BigInt!
 
-  positionCount: BigInt
-  tradeCount: BigInt
+  positionCount: BigInt!
+  tradeCount: BigInt!
 
 }
 
 type Product @entity {
   id: ID! # product id - currency
 
-  cumulativeFees: BigInt
-  cumulativePnl: BigInt
-  cumulativeVolume: BigInt
-  cumulativeMargin: BigInt
+  cumulativeFees: BigInt!
+  cumulativePnl: BigInt!
+  cumulativeVolume: BigInt!
+  cumulativeMargin: BigInt!
 
-  positionCount: BigInt
-  tradeCount: BigInt
+  positionCount: BigInt!
+  tradeCount: BigInt!
 
-  openInterest: BigInt
-  openInterestLong: BigInt
-  openInterestShort: BigInt
+  openInterest: BigInt!
+  openInterestLong: BigInt!
+  openInterestShort: BigInt!
 
 }
 
@@ -118,6 +118,6 @@ type Pool @entity {
   
   id: ID! # 1
 
-  cumulativeFees: BigInt
+  cumulativeFees: BigInt!
 
 }
